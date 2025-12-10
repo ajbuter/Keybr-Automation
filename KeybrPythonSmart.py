@@ -9,7 +9,6 @@ import random
 keyboard = Controller()
 start_typing = False
 delay = 0.15 # default typing speed
-delay = random.uniform(0.1, 0.16)
 
 typing_script = []
 
@@ -32,33 +31,33 @@ def get_keybr_text():
 
 # ---- Typing function ----
 def type_script():
-    global start_typing
+    global start_typing, delay
     for char, delay_time in typing_script:
         if not start_typing:
             break
         keyboard.press(char)
         keyboard.release(char)
         time.sleep(delay_time)
-    start_typing = False
+        delay = random.uniform(0.1,0.16)
+        print('Delay currently is:', delay)
+    type_process()
 
+def type_job():
+    global start_typing, typing_script
+    print("F8 pressed: grabbing text and starting typing...")
+    text_to_type = get_keybr_text()
+    print("Text grabbed:", repr(text_to_type))
+    typing_script = [(c, delay) for c in text_to_type]
+    start_typing = True
+
+def type_process():
+    type_job()
+    type_script()
 # ---- Hotkey listener ----
 def on_press(key):
-    global start_typing, typing_script
+    global start_typing
     if key == Key.f8 and not start_typing:
-        working = True
-        print("Working Started")
-        while working:
-            print("F8 pressed: grabbing text and starting typing...")
-            text_to_type = get_keybr_text()
-            print("Text grabbed:", repr(text_to_type))
-            delay = random.uniform(0.1,0.16)
-            typing_script = [(c, delay) for c in text_to_type]
-            start_typing = True
-            threading.Thread(target=type_script).start()
-            print("started sleep")
-            time.sleep(17)
-            print("5 seconds left")
-            time.sleep(5)
+        type_process() 
     elif key == Key.esc:
         start_typing = False
         print("ESC pressed: stopped typing.")
