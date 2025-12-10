@@ -39,10 +39,11 @@ def type_script():
         keyboard.release(char)
         time.sleep(delay_time)
         delay = random.uniform(0.1,0.16)
-        print('Delay currently is:', delay)
+        # # print the active delay
+        # print('Delay currently is:', delay)
     type_process()
 
-def type_job():
+def type_setup():
     global start_typing, typing_script
     print("F8 pressed: grabbing text and starting typing...")
     text_to_type = get_keybr_text()
@@ -51,22 +52,24 @@ def type_job():
     start_typing = True
 
 def type_process():
-    type_job()
+    type_setup()
     type_script()
+
 # ---- Hotkey listener ----
 def on_press(key):
     global start_typing
+    # Begin Typing
     if key == Key.f8 and not start_typing:
         type_process() 
+    # Stop Typing
     elif key == Key.esc:
         start_typing = False
         print("ESC pressed: stopped typing.")
-
-    # # print cursor location with down arrow
-    # elif key == key.down:
-    #     print(pyautogui.position())
+    # print cursor location with down arrow
+    elif key == key.down:
+        print(pyautogui.position())
 
 # ---- Main listener ----
 with Listener(on_press=on_press) as listener:
-    print("Press F8 to start typing (OCR grabs text), ESC to stop.")
+    print("Press F8 to start typing, ESC to stop.")
     listener.join()
