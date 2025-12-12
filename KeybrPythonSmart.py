@@ -35,10 +35,10 @@ def type_script():
     for char, delay_time in typing_script:
         if not typing:
             break
+        delay_time = random.uniform(0.1,0.16)
         keyboard.press(char)
         keyboard.release(char)
         time.sleep(delay_time)
-        delay = random.uniform(0.1,0.16)
 
         # # print the active delay
         # print('Delay currently is:', delay)
@@ -75,4 +75,4 @@ def on_press(key):
 # ---- Main listener ----
 with Listener(on_press=on_press) as listener:
     print("Press F8 to start typing, ESC to stop.")
-    listener.join(None)
+    listener.join()
