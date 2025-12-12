@@ -41,7 +41,7 @@ def type_script():
         time.sleep(delay_time)
 
         # # print the active delay
-        # print('Delay currently is:', delay)
+        # print('Delay currently is:', delay_time)
 
     if typing:
         type_process()
