@@ -7,8 +7,7 @@ import time
 import random
 
 keyboard = Controller()
-start_typing = False
-stop_typing = False
+typing = False
 delay = 0.15 # default typing speed
 
 typing_script = []
@@ -32,41 +31,43 @@ def get_keybr_text():
 
 # ---- Typing function ----
 def type_script():
-    global start_typing, stop_typing, delay
+    global typing, delay, typing_script
     for char, delay_time in typing_script:
-        if not start_typing:
+        if not typing:
             break
         keyboard.press(char)
         keyboard.release(char)
         time.sleep(delay_time)
         delay = random.uniform(0.1,0.16)
+
         # # print the active delay
         # print('Delay currently is:', delay)
-    if not stop_typing:
+
+    if typing:
         type_process()
 
 def type_setup():
-    global start_typing, typing_script
+    global typing, typing_script
     print("F8 pressed: grabbing text and starting typing...")
     text_to_type = get_keybr_text()
     print("Text grabbed:", repr(text_to_type))
     typing_script = [(c, delay) for c in text_to_type]
-    start_typing = True
+    typing = True
 
 def type_process():
     type_setup()
-    type_script()
+    threading.Thread(target=type_script).start()
 
 # ---- Hotkey listener ----
 def on_press(key):
-    global start_typing, stop_typing
+    global typing
     # Begin Typing
-    if key == Key.f8 and not start_typing:
-        type_process() 
+    if key == Key.f8 and not typing:
+        type_process()
     # Stop Typing
     elif key == Key.esc:
-        stop_typing = True
-        print("ESC : stopped typing.", stop_typing)
+        typing = False
+        print("ESC : stopped typing.", typing)
     # print cursor location with down arrow
     elif key == Key.down:
         print(pyautogui.position())
@@ -74,4 +75,4 @@ def on_press(key):
 # ---- Main listener ----
 with Listener(on_press=on_press) as listener:
     print("Press F8 to start typing, ESC to stop.")
-    listener.join()
+    listener.join(None)
